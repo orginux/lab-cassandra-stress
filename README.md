@@ -1,3 +1,4 @@
+# lab-cassandra-stress
 Run tests:
 
 ```bash
@@ -21,4 +22,3 @@ docker exec -it cassandra-2 bash
 ```bash
 nodetool tablehistograms keyspace1 standard1
 ```
-# lab-cassandra-stress
