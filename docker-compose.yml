@@ -1,0 +1,18 @@
+
+version: '3.9'
+
+services:
+  cassandra-1: &cassandra-1
+    image: cassandra:4.0.7
+    hostname: cassandra-1
+    container_name: cassandra-1
+    environment:
+      - CASSANDRA_CLUSTER_NAME=test
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2
+      - MAX_HEAP_SIZE=1024M
+      - HEAP_NEWSIZE=256M
+
+  cassandra-2:
+    <<: *cassandra-1
+    hostname: cassandra-2
+    container_name: cassandra-2
