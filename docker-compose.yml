@@ -1,4 +1,4 @@
-
+---
 version: '3.9'
 
 services:
@@ -11,6 +11,11 @@ services:
       - CASSANDRA_SEEDS=cassandra-1,cassandra-2
       - MAX_HEAP_SIZE=1024M
       - HEAP_NEWSIZE=256M
+    volumes:
+      - type: bind
+        source: ./profiles/
+        target: /var/lib/stress-profiles/
+
 
   cassandra-2:
     <<: *cassandra-1

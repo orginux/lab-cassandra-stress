@@ -10,7 +10,7 @@ cd /opt/cassandra/tools/bin/
 ```
 
 ```bash
-./cassandra-stress write n=10000
+./cassandra-stress user profile=/var/lib/stress-profiles/test_profile_1.yml duration=1m "ops(insert=1)" truncate=once
 ```
 
 
@@ -20,5 +20,5 @@ docker exec -it cassandra-2 bash
 ```
 
 ```bash
-nodetool tablehistograms keyspace1 standard1
+watch  -t -d nodetool tablehistograms stresscql test
 ```

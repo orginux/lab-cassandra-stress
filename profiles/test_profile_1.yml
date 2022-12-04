@@ -1,0 +1,67 @@
+---
+# Keyspace Name
+keyspace: stresscql
+
+# The CQL for creating a keyspace (optional if it already exists)
+# Would almost always be network topology unless running something locall
+keyspace_definition: |
+  CREATE KEYSPACE IF NOT EXISTS stresscql
+      WITH REPLICATION = {
+          'class' : 'SimpleStrategy',
+          'replication_factor':3
+      } AND DURABLE_WRITES = false;
+
+# Table name
+table: test
+
+# The CQL for creating a table you wish to stress (optional if it already exists)
+table_definition: |
+  CREATE TABLE IF NOT EXISTS test (
+    key text,
+    aggregator text,
+    format text,
+    streams text,
+    PRIMARY KEY((key, aggregator))
+    ) WITH gc_grace_seconds = 3600
+        AND bloom_filter_fp_chance = 0.001
+        AND caching = {'keys': 'ALL', 'rows_per_partition': 'ALL'}
+        AND compaction = {'class' : 'LeveledCompactionStrategy', 'sstable_size_in_mb':'512' }
+
+### Column Distribution Specifications ###
+
+columnspec:
+  - name: key
+    cluster: fixed(100)  
+
+  - name: aggregator
+    size: gaussian(10..200)
+
+  - name: format
+    size: uniform(30..300)
+
+  - name: streams
+    size: gaussian(10..200)
+
+### Batch Ratio Distribution Specifications ###
+
+insert:
+  partitions: fixed(1)
+
+  select:    fixed(1)/1000
+
+  batchtype: UNLOGGED
+
+
+#
+# A list of queries you wish to run against the schema
+#
+queries:
+   singlepost:
+      cql: select * from test where key = ? LIMIT 1
+      fields: samerow
+   regularupdate:
+      cql: update test set streams = ? where key = ? and aggregator = ?
+      fields: samerow
+   updatewithlwt:
+      cql: update test set streams = ? where key = ? and aggregator = ? IF format = ?
+      fields: samerow
